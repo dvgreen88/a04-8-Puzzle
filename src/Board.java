@@ -22,6 +22,7 @@ import edu.princeton.cs.introcs.StdOut;
 public class Board {
 	private int N;
 	private int[][] tiles;
+	private int[][] goal;
 
 	/**
 	 * construct a board from an N-by-N array of tiles
@@ -44,6 +45,7 @@ public class Board {
 
 		this.N = tiles[0].length;
 		this.tiles = tiles;
+		goal = makeAGoalArray(N);
 	}
 
 	/**
@@ -54,8 +56,8 @@ public class Board {
 	public int hamming() {
 		int numOutOfOrder = 0;
 		int value;
-		
-		for (int i = 0; i < N * N - 1; i++) {
+
+		for (int i = 1; i < N * N; i++) {
 			int row = i / N;
 			int col = i % N;
 			value = tiles[row][col];
@@ -76,15 +78,50 @@ public class Board {
 		int distanceSum = 0;
 		int value;
 		int row;
+		int goalRow = 0;
+		int goalCol = 0;
 		int col;
 
-		for (int i = 0; i < N * N - 1; i++) {
+		for (int i = 0; i < N * N; ++i) {
 			row = i / N;
 			col = i % N;
 			value = tiles[row][col];
+
+			if (value == 0) {
+				continue;
+			}
+
+			for (int j = 0; j < N * N; j++) {
+				if (goal[j / N][j % N] == value) {
+					goalRow = j / N;
+					goalCol = j % N;
+				}
+			}
+
+			distanceSum += (Math.abs(goalRow - row) + Math.abs(goalCol - col));
 		}
 		StdOut.println(distanceSum);
 		return distanceSum;
+	}
+
+	private static int[][] makeAGoalArray(int n) {
+		int[][] goal = new int[n][n];
+		int count = 1;
+		// int[][] goal = {
+		// {1, 2, 3},
+		// {4, 5, 6},
+		// {7, 8, 0}
+		// };
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				if (i == n - 1 && j == n - 1) {
+					goal[n - 1][n - 1] = 0;
+				} else {
+					goal[i][j] = count++;
+				}
+			}
+		}
+		return goal;
 	}
 
 	/**
@@ -164,10 +201,25 @@ public class Board {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		int[][] values = { { 4, 1, 3 }, { 0, 2, 6 }, { 7, 5, 8 } };
-		Board myBoard = new Board(values);
+		int[][] values1 = { { 0, 1, 3 }, { 4, 2, 5 }, { 7, 8, 6 } }; // 4
+		int[][] values2 = { { 1, 2, 3 }, { 0, 7, 6 }, { 5, 4, 8 } }; // 7
+		int[][] values3 = { { 2, 3, 5 }, { 1, 0, 4 }, { 7, 8, 6 } }; // 8
+		int[][] difValues = { { 0, 15, 14, 13 }, { 12, 11, 10, 9 },
+				{ 8, 7, 6, 5 }, { 4, 3, 2, 1 } };
+		Board myBoard = new Board(values3);
+		Board difBoard = new Board(difValues);
 		StdOut.println(myBoard);
-		myBoard.hamming();
+		myBoard.manhattan();
+		StdOut.println("-------------");
+		StdOut.println(difBoard);
+		difBoard.manhattan();
+		StdOut.println();
+		// myBoard.hamming();
+
+		// int[][] goal = makeAGoalArray(4);
+		// Board goalBoard = new Board(goal);
+		// StdOut.println(goalBoard);
+		// goalBoard.manhattan();
 	}
 
 }
