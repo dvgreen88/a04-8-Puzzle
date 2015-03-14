@@ -224,13 +224,13 @@ public class Board {
 	 * @return an Iterable of all neighboring board positions
 	 */
 	public Iterable<Board> neighbors() {
-		int i0 = 0, j0 = 0;
+		int index0ForX = 0, index0ForY = 0;
 		boolean found = false;
 		for (int i = 0; i < N; i++) {
 			for (int j = 0; j < N; j++) {
 				if (tiles[i][j] == 0) {
-					i0 = i;
-					j0 = j;
+					index0ForX = i;
+					index0ForY = j;
 					found = true;
 					break;
 				}
@@ -243,25 +243,25 @@ public class Board {
 		Stack<Board> boards = new Stack<Board>();
 
 		Board board = new Board(tiles);
-		boolean isNeighbor = board.indexSwap(i0, j0, i0 - 1, j0);
+		boolean isNeighbor = board.indexSwap(index0ForX, index0ForY, index0ForX - 1, index0ForY);
 		if (isNeighbor) {
 			boards.push(board);
 		}
 
 		board = new Board(tiles);
-		isNeighbor = board.indexSwap(i0, j0, i0, j0 - 1);
+		isNeighbor = board.indexSwap(index0ForX, index0ForY, index0ForX, index0ForY - 1);
 		if (isNeighbor) {
 			boards.push(board);
 		}
 
 		board = new Board(tiles);
-		isNeighbor = board.indexSwap(i0, j0, i0 + 1, j0);
+		isNeighbor = board.indexSwap(index0ForX, index0ForY, index0ForX + 1, index0ForY);
 		if (isNeighbor) {
 			boards.push(board);
 		}
 
 		board = new Board(tiles);
-		isNeighbor = board.indexSwap(i0, j0, i0, j0 + 1);
+		isNeighbor = board.indexSwap(index0ForX, index0ForY, index0ForX, index0ForY + 1);
 		if (isNeighbor) {
 			boards.push(board);
 		}
