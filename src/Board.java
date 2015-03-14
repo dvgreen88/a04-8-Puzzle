@@ -183,17 +183,17 @@ public class Board {
 	 * 
 	 * @param i
 	 * @param j
-	 * @param it
-	 * @param jt
+	 * @param newI
+	 * @param newJ
 	 * @return
 	 */
-	private boolean indexSwap(int i, int j, int it, int jt) {
-		if (it < 0 || it >= N || jt < 0 || jt >= N) {
+	private boolean indexSwap(int i, int j, int newI, int newJ) {
+		if (newI < 0 || newI >= N || newJ < 0 || newJ >= N) {
 			return false;
 		}
 		int temp = tiles[i][j];
-		tiles[i][j] = tiles[it][jt];
-		tiles[it][jt] = temp;
+		tiles[i][j] = tiles[newI][newJ];
+		tiles[newI][newJ] = temp;
 		return true;
 	}
 
