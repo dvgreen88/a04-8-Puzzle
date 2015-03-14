@@ -6,9 +6,10 @@
 
 package a04_8_Puzzle;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
-import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.Stack;
 import edu.princeton.cs.introcs.StdOut;
 
 /**
@@ -20,9 +21,9 @@ import edu.princeton.cs.introcs.StdOut;
  *
  */
 public class Board {
-	private int N;
-	private int[][] tiles;
-	private int[][] goal;
+	private final int N;
+	private final int[][] tiles;
+	private final int[][] goal;
 
 	/**
 	 * construct a board from an N-by-N array of tiles
@@ -34,18 +35,57 @@ public class Board {
 	 * @param tiles
 	 */
 	public Board(int[][] tiles) {
-		if (tiles == null) {
-			throw new java.lang.NullPointerException();
-		}
-
-		// this is needed, commented out until isSolvable is written
-		// if (!isSolvable()) {
-		// throw new java.lang.IllegalArgumentException();
-		// }
-
-		this.N = tiles[0].length;
-		this.tiles = tiles;
+		N = tiles.length;
+		this.tiles = new int[N][N];
 		goal = makeAGoalArray(N);
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				this.tiles[i][j] = tiles[i][j];
+			}
+		}
+	}
+
+	/**
+	 * board size N
+	 * 
+	 * @return N
+	 */
+	public int size() {
+		return N;
+	}
+
+	/**
+	 * creates a board based on what the end board will look like
+	 * 
+	 * @return the actual goal board
+	 */
+	private static int[][] makeAGoalArray(int n) {
+		int[][] goal = new int[n][n];
+		int count = 1;
+		// int[][] goal = {
+		// {1, 2, 3},
+		// {4, 5, 6},
+		// {7, 8, 0}
+		// };
+		/*
+		 * for (int i = 0; i < n; i++) { for (int j = 0; j < n; j++) { if (i ==
+		 * n - 1 && j == n - 1) { goal[n - 1][n - 1] = 0; } else { goal[i][j] =
+		 * count++; } } }
+		 */
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < n; j++) {
+				if (count == n * n)
+					count = 0;
+				goal[i][j] = count++;
+
+			}
+
+		}
+		return goal;
+	}
+
+	private int[][] getGoal() {
+		return goal;
 	}
 
 	/**
@@ -65,14 +105,13 @@ public class Board {
 				numOutOfOrder++;
 			}
 		}
-		StdOut.println(numOutOfOrder);
 		return numOutOfOrder;
 	}
 
 	/**
 	 * return sum of Manhattan distances between blocks and goal
 	 * 
-	 * @return
+	 * @return the manhattan distance between where you are to the goal
 	 */
 	public int manhattan() {
 		int distanceSum = 0;
@@ -100,67 +139,62 @@ public class Board {
 
 			distanceSum += (Math.abs(goalRow - row) + Math.abs(goalCol - col));
 		}
-		StdOut.println(distanceSum);
 		return distanceSum;
 	}
 
-	private static int[][] makeAGoalArray(int n) {
-		int[][] goal = new int[n][n];
-		int count = 1;
-		// int[][] goal = {
-		// {1, 2, 3},
-		// {4, 5, 6},
-		// {7, 8, 0}
-		// };
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < n; j++) {
-				if (i == n - 1 && j == n - 1) {
-					goal[n - 1][n - 1] = 0;
-				} else {
-					goal[i][j] = count++;
+	/**
+	 * is this board the goal board?
+	 * 
+	 * @return true if matches, otherwise false
+	 */
+	public boolean isGoal() {
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				if (tiles[i][j] != goal[i][j]) {
+					return false;
 				}
 			}
 		}
-		return goal;
+		return true;
 	}
 
 	/**
-	 * is the initial board solvable?
+	 * swaps the index for the new board
 	 * 
-	 * @return true if solvable, false otherwise
+	 * @param i
+	 * @param j
+	 * @param it
+	 * @param jt
+	 * @return
 	 */
-	protected boolean isSolvable() {
-		return false;
+	private boolean indexSwap(int i, int j, int it, int jt) {
+		if (it < 0 || it >= N || jt < 0 || jt >= N) {
+			return false;
+		}
+		int temp = tiles[i][j];
+		tiles[i][j] = tiles[it][jt];
+		tiles[it][jt] = temp;
+		return true;
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * does this board equal y Given by Sedgewick (similar to DATA)
-	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
-	public boolean equals(Object y) {
-		if (y == this) {
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
 			return true;
-		} else if (y == null) {
+		if (obj == null)
 			return false;
-		} else if (y.getClass() != this.getClass()) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
-
-		Board other = (Board) y;
-
-		if (other.N != this.N) {
+		Board other = (Board) obj;
+		if (N != other.N)
 			return false;
-		}
-
-		for (int i = 0; i < N; i++) {
-			if (!Arrays.equals(other.tiles[i], this.tiles[i])) {
-				return false;
-			}
-		}
-
+		if (!Arrays.deepEquals(tiles, other.tiles))
+			return false;
 		return true;
 	}
 
@@ -170,16 +204,11 @@ public class Board {
 	 * @return an Iterable of all neighboring board positions
 	 */
 	public Iterable<Board> neighbors() {
-		Queue result = new Queue<Board>();
-
-		return result;
+		return null;
 	}
 
 	/*
-	 * (non-Javadoc)
-	 * 
-	 * return a string representation of the board Given BY Sedgewick in
-	 * Checklist
+	 * string representation of the board (non-Javadoc)
 	 * 
 	 * @see java.lang.Object#toString()
 	 */
@@ -196,6 +225,34 @@ public class Board {
 	}
 
 	/**
+	 * is the initial board solvable?
+	 * 
+	 * @return true if solvable, otherwise false
+	 */
+	public boolean isSolvable() {
+		int value;
+		int invariants = 0;
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				value = tiles[i][j];
+				for (int k = i; k < N; k++) {
+					for (int m = j; m < N; m++) {
+						if (value > tiles[k][m]) {
+							invariants++;
+						}
+					}
+				}
+			}
+		}
+
+		if (invariants % 2 == 0 && N % 2 != 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
 	 * test client
 	 * 
 	 * @param args
@@ -206,20 +263,25 @@ public class Board {
 		int[][] values3 = { { 2, 3, 5 }, { 1, 0, 4 }, { 7, 8, 6 } }; // 8
 		int[][] difValues = { { 0, 15, 14, 13 }, { 12, 11, 10, 9 },
 				{ 8, 7, 6, 5 }, { 4, 3, 2, 1 } };
-		Board myBoard = new Board(values3);
-		Board difBoard = new Board(difValues);
-		StdOut.println(myBoard);
-		myBoard.manhattan();
-		StdOut.println("-------------");
-		StdOut.println(difBoard);
-		difBoard.manhattan();
-		StdOut.println();
-		// myBoard.hamming();
+		int[][] unsolvable = { { 1, 2, 3 }, { 4, 5, 6 }, { 8, 7, 0 } };
 
-		// int[][] goal = makeAGoalArray(4);
-		// Board goalBoard = new Board(goal);
-		// StdOut.println(goalBoard);
-		// goalBoard.manhattan();
+		ArrayList<int[][]> arrays = new ArrayList<>();
+		arrays.add(values1);
+		arrays.add(values2);
+		arrays.add(values3);
+		arrays.add(difValues);
+		arrays.add(unsolvable);
+
+		for (int[][] i : arrays) {
+			Board myBoard = new Board(i);
+			StdOut.println("----------");
+			StdOut.println("Board: ");
+			StdOut.println(myBoard);
+			StdOut.println("Goal Board: ");
+			StdOut.println(new Board(myBoard.getGoal()));
+			StdOut.println("Manhattan Value: " + myBoard.manhattan());
+			StdOut.println("Hamming Value: " + myBoard.hamming());
+			StdOut.println();
+		}
 	}
-
 }
