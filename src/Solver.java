@@ -28,7 +28,7 @@ public class Solver {
 		private Board board;
 		private int moves;
 		private SearchNode previous;
-		private int cachedPriority = -1;
+		private int priority = -1;
 
 		SearchNode(Board board, int moves, SearchNode previous) {
 			this.board = board;
@@ -37,10 +37,10 @@ public class Solver {
 		}
 
 		private int priority() {
-			if (cachedPriority == -1) {
-				cachedPriority = moves + board.manhattan();
+			if (priority == -1) {
+				priority = moves + board.manhattan();
 			}
-			return cachedPriority;
+			return priority;
 		}
 
 		@Override
@@ -75,8 +75,6 @@ public class Solver {
 			isSolvable = true;
 		}
 		
-		
-
 		boards = new Stack<Board>();
 		if (initial.isGoal()) {
 			this.boards.push(initial);
@@ -84,7 +82,6 @@ public class Solver {
 		} else if (initial.copyWithSwitch().isGoal()) {
 			return;
 		}
-
 	}
 
 	/**
