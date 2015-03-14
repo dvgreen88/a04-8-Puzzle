@@ -71,27 +71,20 @@ public class Solver {
 
 		if (!initial.isSolvable()) {
 			throw new java.lang.IllegalArgumentException();
+		} else {
+			isSolvable = true;
 		}
+		
+		
 
 		boards = new Stack<Board>();
 		if (initial.isGoal()) {
-			isSolvable = true;
 			this.boards.push(initial);
 			return;
 		} else if (initial.copyWithSwitch().isGoal()) {
-			isSolvable = false;
 			return;
 		}
 
-	}
-
-	/**
-	 * is the initial board solvable?
-	 * 
-	 * @return true if solvable, otherwise false
-	 */
-	public static boolean isSolvable() {
-		return isSolvable;
 	}
 
 	/**
@@ -101,7 +94,11 @@ public class Solver {
 	 * @return min number of moves to solve the board, -1 if no solution
 	 */
 	public int moves() {
-		return 0;
+		if (isSolvable) {
+			return boards.size() - 1;
+		} else {
+			return -1;
+		}
 	}
 
 	public Iterable<Board> solution() {
