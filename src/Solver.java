@@ -56,6 +56,36 @@ public class Solver {
 	}
 
 	/**
+	 * find a solution to the initial board
+	 * 
+	 * The constructor should throw a java.lang.IllegalArgumentException if the
+	 * initial board is not solvable and a java.lang.NullPointerException if the
+	 * initial board is null.
+	 * 
+	 * @param initial
+	 */
+	public Solver(Board initial) {
+		if (initial == null) {
+			throw new java.lang.NullPointerException();
+		}
+
+		if (!initial.isSolvable()) {
+			throw new java.lang.IllegalArgumentException();
+		}
+
+		boards = new Stack<Board>();
+		if (initial.isGoal()) {
+			isSolvable = true;
+			this.boards.push(initial);
+			return;
+		} else if (initial.copyWithSwitch().isGoal()) {
+			isSolvable = false;
+			return;
+		}
+
+	}
+
+	/**
 	 * is the initial board solvable?
 	 * 
 	 * @return true if solvable, otherwise false
@@ -71,11 +101,7 @@ public class Solver {
 	 * @return min number of moves to solve the board, -1 if no solution
 	 */
 	public int moves() {
-		if (isSolvable) {
-			return boards.size() - 1;
-		} else {
-			return -1;
-		}
+		return 0;
 	}
 
 	public Iterable<Board> solution() {
