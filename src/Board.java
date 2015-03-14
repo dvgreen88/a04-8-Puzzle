@@ -159,6 +159,26 @@ public class Board {
 	}
 
 	/**
+	 * a board obtained by exchanging two adjacent blocks in the same row
+	 * 
+	 * @return
+	 */
+	public Board copyWithSwitch() {
+		Board board = new Board(tiles);
+
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N - 1; j++) {
+				if (tiles[i][j] != 0 && tiles[i][j + 1] != 0) {
+					board.indexSwap(i, j, i, j + 1);
+					return board;
+				}
+			}
+		}
+
+		return board;
+	}
+
+	/**
 	 * swaps the index for the new board
 	 * 
 	 * @param i
@@ -204,7 +224,49 @@ public class Board {
 	 * @return an Iterable of all neighboring board positions
 	 */
 	public Iterable<Board> neighbors() {
-		return null;
+		int i0 = 0, j0 = 0;
+		boolean found = false;
+		for (int i = 0; i < N; i++) {
+			for (int j = 0; j < N; j++) {
+				if (tiles[i][j] == 0) {
+					i0 = i;
+					j0 = j;
+					found = true;
+					break;
+				}
+			}
+			if (found) {
+				break;
+			}
+		}
+
+		Stack<Board> boards = new Stack<Board>();
+
+		Board board = new Board(tiles);
+		boolean isNeighbor = board.indexSwap(i0, j0, i0 - 1, j0);
+		if (isNeighbor) {
+			boards.push(board);
+		}
+
+		board = new Board(tiles);
+		isNeighbor = board.indexSwap(i0, j0, i0, j0 - 1);
+		if (isNeighbor) {
+			boards.push(board);
+		}
+
+		board = new Board(tiles);
+		isNeighbor = board.indexSwap(i0, j0, i0 + 1, j0);
+		if (isNeighbor) {
+			boards.push(board);
+		}
+
+		board = new Board(tiles);
+		isNeighbor = board.indexSwap(i0, j0, i0, j0 + 1);
+		if (isNeighbor) {
+			boards.push(board);
+		}
+
+		return boards;
 	}
 
 	/*
